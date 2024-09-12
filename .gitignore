@@ -1,38 +1,73 @@
+# Ignore Maven output files
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
-*.iml
-*.ipr
-
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Ignore build files
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+# Ignore Eclipse project files
+*.launch
+.settings/
+.classpath
+.project
 
-### Mac OS ###
+# Ignore IntelliJ IDEA project files
+.idea/
+*.iml
+*.iws
+
+# Ignore IntelliJ generated files
+/out/
+
+# Ignore OS-specific files
 .DS_Store
+Thumbs.db
+
+# Ignore logs
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+
+# Ignore compiled Java files
+*.class
+
+# Ignore package files
+*.jar
+*.war
+*.ear
+
+# Ignore Maven wrapper files
+.mvn/wrapper/maven-wrapper.jar
+
+# Ignore test reports
+/test-classes/
+/test-output/
+/surefire-reports/
+
+# Ignore coverage reports
+/coverage/
+*.ec
+*.exec
+
+# Ignore dependency directories
+**/node_modules/
+**/dist/
+
+# Ignore specific file types
+*.lock
+*.bak
+*.old
+*.orig
+
+# Ignore personal IDE files
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/vcs.xml
+
+# Ignore local environment config
+.env
+
