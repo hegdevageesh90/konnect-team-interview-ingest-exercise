@@ -2,8 +2,8 @@ package com.kong.konnect.search.config;
 
 import org.apache.http.HttpHost;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.opensearch.client.RestHighLevelClient;
 import org.opensearch.client.RestClient;
+import org.opensearch.client.RestHighLevelClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,16 +12,27 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class AppConfig {
+  private final AppConfigProperties appConfigProperties;
 
-    @Bean
-    public NewTopic konnectTopic() {
-        return new NewTopic("konnect-cdc-events", 1, (short) 1);
-    }
+  public AppConfig(AppConfigProperties appConfigProperties) {
+    this.appConfigProperties = appConfigProperties;
+  }
 
-    @Bean
-    public RestHighLevelClient openSearchClient() {
-        return new RestHighLevelClient(
-                RestClient.builder(new HttpHost("localhost", 9200, "http"))
-        );
-    }
+  @Bean
+  public NewTopic konnectTopic() {
+    return new NewTopic(
+        appConfigProperties.getKafka().getTopicName(),
+        appConfigProperties.getKafka().getPartitions(),
+        appConfigProperties.getKafka().getReplicationFactor());
+  }
+
+  @Bean
+  public RestHighLevelClient openSearchClient() {
+    return new RestHighLevelClient(
+        RestClient.builder(
+            new HttpHost(
+                appConfigProperties.getOpenSearch().getHost(),
+                appConfigProperties.getOpenSearch().getPort(),
+                appConfigProperties.getOpenSearch().getScheme())));
+  }
 }
