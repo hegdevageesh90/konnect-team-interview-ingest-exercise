@@ -1,6 +1,8 @@
 package com.kong.konnect.search.service;
 
 import com.kong.konnect.search.config.AppConfigProperties;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,9 +21,9 @@ public class KafkaProducerService {
   private final String topicName;
 
   public KafkaProducerService(
-      KafkaTemplate<String, String> kafkaTemplate, AppConfigProperties appConfigProperties) {
+      KafkaTemplate<String, String> kafkaTemplate, AppConfigProperties.KafkaProperties kafka) {
     this.kafkaTemplate = kafkaTemplate;
-    this.topicName = appConfigProperties.getKafka().getTopicName(); // Cached for reuse
+    this.topicName = kafka.getTopicName();
   }
 
   /**
@@ -30,6 +32,8 @@ public class KafkaProducerService {
    *
    * @param message event to be produced
    */
+  @CircuitBreaker(name = "kafkaCircuitBreaker", fallbackMethod = "fallback")
+  @Retry(name = "kafkaRetry")
   public void sendMessage(String message) {
     kafkaTemplate
         .send(topicName, message)
@@ -43,5 +47,17 @@ public class KafkaProducerService {
               logger.error("Failed to send message to topic {}", topicName, ex);
               return null;
             });
+  }
+
+  /**
+   * Fallback method for circuit breaker failure.
+   *
+   * @param message the message that failed
+   * @param ex the exception that triggered the fallback
+   */
+  public void fallback(String message, Throwable ex) {
+    logger.error(
+        "Kafka Circuit breaker activated. Fallback triggered for message: {}", message, ex);
+    // TODO : add fallback impl. example : index to a backup instance/cluster.
   }
 }

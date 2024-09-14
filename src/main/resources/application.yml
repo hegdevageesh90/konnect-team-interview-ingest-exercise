@@ -29,3 +29,24 @@ com:
           port: 9200
           scheme: http
           index: cdc
+resilience4j:
+  circuitbreaker:
+    instances:
+      kafkaCircuitBreaker:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 60s
+        ringBufferSizeInHalfOpenState: 10
+        ringBufferSizeInClosedState: 100
+      openSearchCircuitBreaker:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 60s
+        ringBufferSizeInHalfOpenState: 10
+        ringBufferSizeInClosedState: 100
+  retry:
+    instances:
+      kafkaRetry:
+        maxAttempts: 5
+        waitDuration: 500ms
+      openSearchRetry:
+        maxAttempts: 5
+        waitDuration: 500ms

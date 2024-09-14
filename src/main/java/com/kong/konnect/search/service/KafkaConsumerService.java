@@ -18,13 +18,14 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumerService {
   private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerService.class);
   private final OpenSearchService openSearchService;
-  private final AppConfigProperties appConfigProperties;
-  private final Gson gson = new Gson();
+  private final AppConfigProperties.KafkaProperties kafka;
+  private final Gson gson;
 
   public KafkaConsumerService(
-      OpenSearchService openSearchService, AppConfigProperties appConfigProperties) {
+      OpenSearchService openSearchService, AppConfigProperties.KafkaProperties kafka) {
     this.openSearchService = openSearchService;
-    this.appConfigProperties = appConfigProperties;
+    this.kafka = kafka;
+    this.gson = new Gson();
   }
 
   /**
@@ -33,9 +34,7 @@ public class KafkaConsumerService {
    *
    * @param record that is consumed
    */
-  @KafkaListener(
-      topics = "#{appConfigProperties.kafka.topicName}",
-      groupId = "#{appConfigProperties.kafka.consumerGroupId}")
+  @KafkaListener(topics = "#{kafka.topicName}", groupId = "#{kafka.consumerGroupId}")
   public void consume(ConsumerRecord<String, String> record) {
     logger.info("Consuming message: {}", record.value());
     try {
