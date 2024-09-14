@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   kafka:
     bootstrap-servers: localhost:9092
@@ -10,9 +13,19 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
-opensearch:
-  host: http://localhost:9200
-  index: konnect-entities
-
-server:
-  port: 8081
+com:
+  kong:
+    konnect:
+      search:
+        cdc:
+          file-path: stream.jsonl
+        kafka:
+          topic-name: konnect-cdc-events
+          replication-factor: 1
+          partitions: 1
+          consumer-group-id: konnect-search-group
+        open-search:
+          host: localhost
+          port: 9200
+          scheme: http
+          index: cdc
