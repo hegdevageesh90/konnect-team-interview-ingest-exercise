@@ -7,6 +7,9 @@ import org.opensearch.client.RestClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @author hegdevageesh
+ */
 @Configuration
 public class AppConfig {
 

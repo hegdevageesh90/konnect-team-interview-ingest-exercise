@@ -1,12 +1,14 @@
 package com.kong.konnect.search.service;
 
-import com.kong.konnect.search.model.CDCEvent;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestHighLevelClient;
 import org.opensearch.action.index.IndexRequest;
+import org.opensearch.common.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class OpenSearchService {
@@ -17,13 +19,13 @@ public class OpenSearchService {
         this.openSearchClient = openSearchClient;
     }
 
-    public void indexEvent(CDCEvent event) {
+    public void indexEvent(String json) {
         try {
-            IndexRequest indexRequest = new IndexRequest("konnect-entities").source(event.toMap());
+            IndexRequest indexRequest = new IndexRequest("konnect-entities").id(UUID.randomUUID().toString()).source(json, XContentType.JSON);
             openSearchClient.index(indexRequest, RequestOptions.DEFAULT);
-            logger.info("Indexed event into OpenSearch");
+            logger.info("Indexed JSON data into OpenSearch");
         } catch (Exception e) {
-            logger.error("Error indexing event to OpenSearch", e);
+            logger.error("Error indexing JSON data to OpenSearch", e);
         }
     }
 }
