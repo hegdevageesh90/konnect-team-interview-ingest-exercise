@@ -10,25 +10,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * Index given JSON to OpenSearch
+ *
+ * @author hegdevageesh
+ */
 @Service
 public class OpenSearchService {
   private static final Logger logger = LoggerFactory.getLogger(OpenSearchService.class);
   private final RestHighLevelClient openSearchClient;
-  private final AppConfigProperties appConfigProperties;
+  private final String indexName;
 
   public OpenSearchService(
       RestHighLevelClient openSearchClient, AppConfigProperties appConfigProperties) {
     this.openSearchClient = openSearchClient;
-    this.appConfigProperties = appConfigProperties;
+    this.indexName = appConfigProperties.getOpenSearch().getIndex();
   }
 
+  /**
+   * Forms a new IndexRequest and index it to OpenSearch
+   *
+   * @param json input JSON to be indexed
+   */
   public void indexEvent(String json) {
     try {
-      IndexRequest indexRequest =
-          new IndexRequest(appConfigProperties.getOpenSearch().getIndex())
+      openSearchClient.index(
+          new IndexRequest(indexName)
               .id(UUID.randomUUID().toString())
-              .source(json, XContentType.JSON);
-      openSearchClient.index(indexRequest, RequestOptions.DEFAULT);
+              .source(json, XContentType.JSON),
+          RequestOptions.DEFAULT);
       logger.info("Indexed JSON data into OpenSearch");
     } catch (Exception e) {
       logger.error("Error indexing JSON data to OpenSearch", e);

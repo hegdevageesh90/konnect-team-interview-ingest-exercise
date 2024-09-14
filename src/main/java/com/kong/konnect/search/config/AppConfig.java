@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * Generates necessary beans.
+ *
  * @author hegdevageesh
  */
 @Configuration
