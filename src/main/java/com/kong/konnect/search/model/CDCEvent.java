@@ -1,39 +1,30 @@
 package com.kong.konnect.search.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import java.util.Map;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
+/**
+ * @author hegdevageesh
+ *
+ * CDC Event entity
+ *
+ * @param before - A field in the entity. To be interpreted.
+ * @param after - A field in the entity. To be interpreted.
+ * @param op - A field in the entity. To be interpreted.
+ * @param tsMs - A field in the entity. To be interpreted.
+ */
 public record CDCEvent(
-        @JsonProperty("before") Before before,
-        @JsonProperty("after") After after,
-        @JsonProperty("op") String op,
-        @JsonProperty("ts_ms") long tsMs
+        Before before,
+        After after,
+        String op,
+        long tsMs
 ) {
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Before() {}
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public record After(
-            @JsonProperty("key") String key,
-            @JsonProperty("value") Value value
+            String key,
+            Value value
     ) {
-        @JsonIgnoreProperties(ignoreUnknown = true)
         public record Value(
-                @JsonProperty("type") int type,
-                @JsonProperty("object") ObjectNode object
+                int type,
+                Object object
         ) {}
-    }
-
-    public Map<String, Object> toMap() {
-        return Map.of(
-                "before", before,
-                "after", after,
-                "op", op,
-                "ts_ms", tsMs
-        );
     }
 }

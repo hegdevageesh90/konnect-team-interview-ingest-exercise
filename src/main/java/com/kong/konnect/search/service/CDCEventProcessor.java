@@ -1,7 +1,5 @@
 package com.kong.konnect.search.service;
 
-import com.kong.konnect.search.model.CDCEvent;
-import com.kong.konnect.search.util.JsonParser;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +14,12 @@ import java.io.IOException;
 public class CDCEventProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(CDCEventProcessor.class);
-    private static final String FILE_PATH = "stream2.jsonl"; // Replace with actual file path if different
+    private static final String FILE_PATH = "stream.jsonl";
 
     private final KafkaProducerService kafkaProducerService;
-    private final JsonParser jsonParser;
 
     public CDCEventProcessor(KafkaProducerService kafkaProducerService) {
         this.kafkaProducerService = kafkaProducerService;
-        this.jsonParser = new JsonParser(); // Jackson object mapper for parsing JSON
     }
 
     @PostConstruct
@@ -39,12 +35,8 @@ public class CDCEventProcessor {
             String line;
             while ((line = reader.readLine()) != null) {
                 try {
-                    CDCEvent event = jsonParser.fromJson(line, CDCEvent.class);
-                    String eventAsString = jsonParser.toJson(event);
                     kafkaProducerService.sendMessage("konnect-cdc-events", line);
-                    logger.info("Processed and sent CDC event to Kafka: {}", eventAsString);
-                } catch (IOException e) {
-                    logger.error("Failed to process event: {}", line, e);
+                    logger.info("Processed and sent CDC event to Kafka: {}", line);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
