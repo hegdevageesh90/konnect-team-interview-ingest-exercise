@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OpenSearchService {
   private static final Logger logger = LoggerFactory.getLogger(OpenSearchService.class);
-  private final RestHighLevelClient openSearchClient;
+  private RestHighLevelClient openSearchClient;
   private final String indexName;
 
   public OpenSearchService(
@@ -58,5 +58,9 @@ public class OpenSearchService {
   public void fallback(String json, Throwable ex) {
     logger.error("OpenSearch Circuit breaker activated. Fallback triggered for JSON: {}", json, ex);
     // TODO : add fallback impl. example : index to a backup queue/cluster.
+  }
+
+  public void setOpenSearchClient(RestHighLevelClient openSearchClient) {
+    this.openSearchClient = openSearchClient;
   }
 }

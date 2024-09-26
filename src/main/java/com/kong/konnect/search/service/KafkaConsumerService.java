@@ -3,6 +3,7 @@ package com.kong.konnect.search.service;
 import com.google.gson.Gson;
 import com.kong.konnect.search.config.AppConfigProperties;
 import com.kong.konnect.search.model.CDCEvent;
+import java.util.Objects;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +39,12 @@ public class KafkaConsumerService {
   public void consume(ConsumerRecord<String, String> record) {
     logger.info("Consuming message: {}", record.value());
     try {
-      CDCEvent event = gson.fromJson(record.value(), CDCEvent.class);
-      openSearchService.indexEvent(gson.toJson(event));
+      if (Objects.nonNull(record.value()) && !record.value().isBlank()) {
+        CDCEvent event = gson.fromJson(record.value(), CDCEvent.class);
+        openSearchService.indexEvent(gson.toJson(event));
+      } else {
+        logger.warn("Consumed null or empty event");
+      }
     } catch (Exception e) {
       logger.error("Error processing message", e);
     }
