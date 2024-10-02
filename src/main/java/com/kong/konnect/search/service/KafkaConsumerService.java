@@ -1,7 +1,7 @@
 package com.kong.konnect.search.service;
 
 import com.google.gson.Gson;
-import com.kong.konnect.search.config.AppConfigProperties;
+import com.kong.konnect.search.config.properties.KafkaProperties;
 import com.kong.konnect.search.model.CDCEvent;
 import java.util.Objects;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -19,13 +19,13 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumerService {
   private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerService.class);
   private final OpenSearchService openSearchService;
-  private final AppConfigProperties.KafkaProperties kafka;
+  private final KafkaProperties kafkaProperties;
   private final Gson gson;
 
   public KafkaConsumerService(
-      OpenSearchService openSearchService, AppConfigProperties.KafkaProperties kafka) {
+      OpenSearchService openSearchService, KafkaProperties kafkaProperties) {
     this.openSearchService = openSearchService;
-    this.kafka = kafka;
+    this.kafkaProperties = kafkaProperties;
     this.gson = new Gson();
   }
 
@@ -35,7 +35,9 @@ public class KafkaConsumerService {
    *
    * @param record that is consumed
    */
-  @KafkaListener(topics = "#{kafka.topicName}", groupId = "#{kafka.consumerGroupId}")
+  @KafkaListener(
+      topics = "#{kafkaProperties.topicName}",
+      groupId = "#{kafkaProperties.consumerGroupId}")
   public void consume(ConsumerRecord<String, String> record) {
     logger.info("Consuming message: {}", record.value());
     try {

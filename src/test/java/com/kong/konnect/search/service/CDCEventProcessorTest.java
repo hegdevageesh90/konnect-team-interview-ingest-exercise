@@ -2,7 +2,7 @@ package com.kong.konnect.search.service;
 
 import static org.mockito.Mockito.*;
 
-import com.kong.konnect.search.config.AppConfigProperties;
+import com.kong.konnect.search.config.properties.CdcProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,7 +13,7 @@ class CDCEventProcessorTest {
 
   @Mock private KafkaProducerService kafkaProducerService;
 
-  @Mock private AppConfigProperties appConfigProperties;
+  @Mock private CdcProperties cdcProperties;
 
   @InjectMocks private CDCEventProcessor cdcEventProcessor;
 
@@ -70,8 +70,6 @@ class CDCEventProcessorTest {
   }
 
   private void setupConfigAndFilePath(String filePath) {
-    AppConfigProperties.CdcProperties cdcConfig = mock(AppConfigProperties.CdcProperties.class);
-    when(appConfigProperties.getCdc()).thenReturn(cdcConfig);
-    when(cdcConfig.getFilePath()).thenReturn(filePath);
+    when(cdcProperties.getFilePath()).thenReturn(filePath);
   }
 }

@@ -1,6 +1,6 @@
 package com.kong.konnect.search.service;
 
-import com.kong.konnect.search.config.AppConfigProperties;
+import com.kong.konnect.search.config.properties.KafkaProperties;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
@@ -21,9 +21,9 @@ public class KafkaProducerService {
   private final String topicName;
 
   public KafkaProducerService(
-      KafkaTemplate<String, String> kafkaTemplate, AppConfigProperties.KafkaProperties kafka) {
+      KafkaTemplate<String, String> kafkaTemplate, KafkaProperties kafkaProperties) {
     this.kafkaTemplate = kafkaTemplate;
-    this.topicName = kafka.getTopicName();
+    this.topicName = kafkaProperties.getTopicName();
   }
 
   /**
