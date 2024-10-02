@@ -10,6 +10,7 @@ public class KafkaProperties {
   private short replicationFactor;
   private int partitions;
   private String consumerGroupId;
+  private String bootstrapServers;
 
   public String getTopicName() {
     return topicName;
@@ -41,5 +42,13 @@ public class KafkaProperties {
 
   public void setConsumerGroupId(String consumerGroupId) {
     this.consumerGroupId = consumerGroupId;
+  }
+
+  public String getBootstrapServers() {
+    return bootstrapServers;
+  }
+
+  public void setBootstrapServers(String bootstrapServers) {
+    this.bootstrapServers = bootstrapServers;
   }
 }

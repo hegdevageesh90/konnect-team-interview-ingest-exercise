@@ -24,6 +24,7 @@ com:
           replication-factor: 1
           partitions: 1
           consumer-group-id: konnect-search-group
+          boostrap-servers: localhost:9092
         open-search:
           host: localhost
           port: 9200
