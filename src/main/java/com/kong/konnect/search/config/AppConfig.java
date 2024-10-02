@@ -1,5 +1,7 @@
 package com.kong.konnect.search.config;
 
+import com.kong.konnect.search.config.properties.KafkaProperties;
+import com.kong.konnect.search.config.properties.OpenSearchProperties;
 import org.apache.http.HttpHost;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.opensearch.client.RestClient;
@@ -14,18 +16,20 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class AppConfig {
-  private final AppConfigProperties appConfigProperties;
+  private final KafkaProperties kafkaProperties;
+  private final OpenSearchProperties openSearchProperties;
 
-  public AppConfig(AppConfigProperties appConfigProperties) {
-    this.appConfigProperties = appConfigProperties;
+  public AppConfig(KafkaProperties kafkaProperties, OpenSearchProperties openSearchProperties) {
+    this.kafkaProperties = kafkaProperties;
+    this.openSearchProperties = openSearchProperties;
   }
 
   @Bean
   public NewTopic konnectTopic() {
     return new NewTopic(
-        appConfigProperties.getKafka().getTopicName(),
-        appConfigProperties.getKafka().getPartitions(),
-        appConfigProperties.getKafka().getReplicationFactor());
+        kafkaProperties.getTopicName(),
+        kafkaProperties.getPartitions(),
+        kafkaProperties.getReplicationFactor());
   }
 
   @Bean
@@ -33,8 +37,8 @@ public class AppConfig {
     return new RestHighLevelClient(
         RestClient.builder(
             new HttpHost(
-                appConfigProperties.getOpenSearch().getHost(),
-                appConfigProperties.getOpenSearch().getPort(),
-                appConfigProperties.getOpenSearch().getScheme())));
+                openSearchProperties.getHost(),
+                openSearchProperties.getPort(),
+                openSearchProperties.getScheme())));
   }
 }

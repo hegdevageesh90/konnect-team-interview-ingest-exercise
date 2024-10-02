@@ -1,6 +1,6 @@
 package com.kong.konnect.search.service;
 
-import com.kong.konnect.search.config.AppConfigProperties;
+import com.kong.konnect.search.config.properties.OpenSearchProperties;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import java.util.UUID;
@@ -24,9 +24,9 @@ public class OpenSearchService {
   private final String indexName;
 
   public OpenSearchService(
-      RestHighLevelClient openSearchClient, AppConfigProperties.OpenSearchProperties openSearch) {
+      RestHighLevelClient openSearchClient, OpenSearchProperties openSearchProperties) {
     this.openSearchClient = openSearchClient;
-    this.indexName = openSearch.getIndex();
+    this.indexName = openSearchProperties.getIndex();
   }
 
   /**

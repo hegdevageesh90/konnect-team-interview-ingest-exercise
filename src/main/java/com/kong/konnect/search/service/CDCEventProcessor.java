@@ -1,6 +1,6 @@
 package com.kong.konnect.search.service;
 
-import com.kong.konnect.search.config.AppConfigProperties;
+import com.kong.konnect.search.config.properties.CdcProperties;
 import jakarta.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,18 +21,17 @@ public class CDCEventProcessor {
 
   private static final Logger logger = LoggerFactory.getLogger(CDCEventProcessor.class);
   private final KafkaProducerService kafkaProducerService;
-  private final AppConfigProperties appConfigProperties;
+  private final CdcProperties cdcProperties;
 
-  public CDCEventProcessor(
-      KafkaProducerService kafkaProducerService, AppConfigProperties appConfigProperties) {
+  public CDCEventProcessor(KafkaProducerService kafkaProducerService, CdcProperties cdcProperties) {
     this.kafkaProducerService = kafkaProducerService;
-    this.appConfigProperties = appConfigProperties;
+    this.cdcProperties = cdcProperties;
   }
 
   /** Reads CDC JSONs from stream data file line by line and sends to be produced to Kafka */
   @PostConstruct
   public void processEvents() {
-    var file = new File(appConfigProperties.getCdc().getFilePath());
+    var file = new File(cdcProperties.getFilePath());
 
     Optional.of(file)
         .filter(File::exists)
@@ -51,14 +50,9 @@ public class CDCEventProcessor {
                           }
                         });
               } catch (IOException e) {
-                logger.error(
-                    "Error reading JSONL file at {}",
-                    appConfigProperties.getCdc().getFilePath(),
-                    e);
+                logger.error("Error reading JSONL file at {}", cdcProperties.getFilePath(), e);
               }
             },
-            () ->
-                logger.error(
-                    "JSONL file not found at {}", appConfigProperties.getCdc().getFilePath()));
+            () -> logger.error("JSONL file not found at {}", cdcProperties.getFilePath()));
   }
 }
