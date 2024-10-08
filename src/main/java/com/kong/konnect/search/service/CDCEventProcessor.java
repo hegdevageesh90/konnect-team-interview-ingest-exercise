@@ -36,23 +36,25 @@ public class CDCEventProcessor {
     Optional.of(file)
         .filter(File::exists)
         .ifPresentOrElse(
-            f -> {
-              try (var reader = new BufferedReader(new FileReader(f))) {
-                reader
-                    .lines()
-                    .forEach(
-                        line -> {
-                          try {
-                            kafkaProducerService.sendMessage(line);
-                            logger.info("Processed and sent CDC event to Kafka: {}", line);
-                          } catch (Exception e) {
-                            throw new RuntimeException("Failed to process CDC event", e);
-                          }
-                        });
-              } catch (IOException e) {
-                logger.error("Error reading JSONL file at {}", cdcProperties.getFilePath(), e);
-              }
-            },
+            this::processFile,
             () -> logger.error("JSONL file not found at {}", cdcProperties.getFilePath()));
+  }
+
+  private void processFile(File file) {
+    try (var reader = new BufferedReader(new FileReader(file))) {
+      reader
+          .lines()
+          .forEach(
+              line -> {
+                try {
+                  kafkaProducerService.sendMessage(line);
+                  logger.debug("Processed and sent CDC event to Kafka: {}", line);
+                } catch (Exception e) {
+                  throw new RuntimeException("Failed to process CDC event", e);
+                }
+              });
+    } catch (IOException e) {
+      logger.error("Error reading JSONL file at {}", cdcProperties.getFilePath(), e);
+    }
   }
 }

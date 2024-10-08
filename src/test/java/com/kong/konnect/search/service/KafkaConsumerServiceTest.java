@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {KafkaConsumerService.class})
@@ -43,8 +44,10 @@ class KafkaConsumerServiceTest {
   void testConsumeAnyEvent() throws JsonSyntaxException {
     ConsumerRecord<String, String> resultRecord = mock(ConsumerRecord.class);
     when(resultRecord.value()).thenReturn("foo");
+    Acknowledgment acknowledgment = mock(Acknowledgment.class);
+    doNothing().when(acknowledgment).acknowledge();
 
-    kafkaConsumerService.consume(resultRecord);
+    kafkaConsumerService.consume(resultRecord, acknowledgment);
 
     verify(resultRecord, atLeast(1)).value();
   }
@@ -53,8 +56,10 @@ class KafkaConsumerServiceTest {
   void testConsumeNull() {
     ConsumerRecord<String, String> resultRecord = mock(ConsumerRecord.class);
     when(resultRecord.value()).thenReturn(null);
+    Acknowledgment acknowledgment = mock(Acknowledgment.class);
+    doNothing().when(acknowledgment).acknowledge();
 
-    kafkaConsumerService.consume(resultRecord);
+    kafkaConsumerService.consume(resultRecord, acknowledgment);
 
     verify(resultRecord, times(2)).value();
     verify(openSearchService, times(0)).indexEvent(any());
@@ -64,8 +69,10 @@ class KafkaConsumerServiceTest {
   void testConsumeEmpty() {
     ConsumerRecord<String, String> resultRecord = mock(ConsumerRecord.class);
     when(resultRecord.value()).thenReturn("");
+    Acknowledgment acknowledgment = mock(Acknowledgment.class);
+    doNothing().when(acknowledgment).acknowledge();
 
-    kafkaConsumerService.consume(resultRecord);
+    kafkaConsumerService.consume(resultRecord, acknowledgment);
 
     verify(resultRecord, atLeast(1)).value();
     verify(openSearchService, times(0)).indexEvent(any());
@@ -75,8 +82,10 @@ class KafkaConsumerServiceTest {
   void testConsumeValidEvent() {
     ConsumerRecord<String, String> resultRecord = mock(ConsumerRecord.class);
     when(resultRecord.value()).thenReturn(VALID_CDC_EVENT);
+    Acknowledgment acknowledgment = mock(Acknowledgment.class);
+    doNothing().when(acknowledgment).acknowledge();
 
-    kafkaConsumerService.consume(resultRecord);
+    kafkaConsumerService.consume(resultRecord, acknowledgment);
 
     verify(resultRecord, atLeast(1)).value();
     verify(openSearchService, times(1)).indexEvent(any());
