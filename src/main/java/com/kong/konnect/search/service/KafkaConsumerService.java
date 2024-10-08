@@ -8,6 +8,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 /**
@@ -37,13 +38,15 @@ public class KafkaConsumerService {
    */
   @KafkaListener(
       topics = "#{kafkaProperties.topicName}",
-      groupId = "#{kafkaProperties.consumerGroupId}")
-  public void consume(ConsumerRecord<String, String> record) {
+      groupId = "#{kafkaProperties.consumerGroupId}",
+      containerFactory = "kafkaListenerContainerFactory")
+  public void consume(ConsumerRecord<String, String> record, Acknowledgment acknowledgment) {
     logger.info("Consuming message: {}", record.value());
     try {
       if (Objects.nonNull(record.value()) && !record.value().isBlank()) {
         CDCEvent event = gson.fromJson(record.value(), CDCEvent.class);
         openSearchService.indexEvent(gson.toJson(event));
+        acknowledgment.acknowledge();
       } else {
         logger.warn("Consumed null or empty event");
       }
